@@ -1,6 +1,6 @@
-# Live App CLI
+# Live App
 
-This repository hosts the homebrew package for the Live App CLI
+This repository hosts both the Swift Package and Homebrew CLI for Live App, a server-driven SwiftUI solution powered by [App Maker Professional's](https://appmakerios.com) [SwiftUI Interpreter](https://github.com/App-Maker-Software/BinarySwiftUIInterpreter).
 
 ## Documentation
 
