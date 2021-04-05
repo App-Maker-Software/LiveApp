@@ -1,7 +1,7 @@
 import XCTest
 
-import liveappTests
+import LiveAppTests
 
 var tests = [XCTestCaseEntry]()
-tests += liveappTests.allTests()
+tests += LiveAppTests.allTests()
 XCTMain(tests)
