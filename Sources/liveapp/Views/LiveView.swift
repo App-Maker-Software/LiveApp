@@ -6,7 +6,11 @@
 //
 
 import SwiftUI
+#if _BUILD_FROM_SOURCE
 import SwiftUIInterpreter
+#else
+import FlattenedSwiftUIInterpreter
+#endif
 import ExceptionCatcher
 
 public protocol LiveView: View {
