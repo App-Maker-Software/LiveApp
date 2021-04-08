@@ -7,7 +7,11 @@
 
 import Foundation
 import Combine
+#if _BUILD_FROM_SOURCE
+import SwiftUIInterpreter
+#else
 import FlattenedSwiftUIInterpreter
+#endif
 
 public final class Network {
     private static var anyCancellables: [AnyCancellable] = []

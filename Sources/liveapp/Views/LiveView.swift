@@ -6,7 +6,11 @@
 //
 
 import SwiftUI
+#if _BUILD_FROM_SOURCE
+import SwiftUIInterpreter
+#else
 import FlattenedSwiftUIInterpreter
+#endif
 import ExceptionCatcher
 
 public protocol LiveView: View {
@@ -69,7 +73,7 @@ extension LiveView where LiveBody: View {
                 for: self,
                 allowDebugMessages: false,
                 getBackupView: {
-                    AnyView(liveBody.overlay(NotSetupView()))
+                    AnyView(liveBody)
                 }
             )
         }
