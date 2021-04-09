@@ -16,7 +16,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         // todo: move over to the public binary distribution
-        .package(name: "BinarySwiftUIInterpreter", url: "https://github.com/App-Maker-Software/BinarySwiftUIInterpreter", from: "0.2.0"),
+        .package(name: "BinarySwiftUIInterpreter", url: "https://github.com/App-Maker-Software/BinarySwiftUIInterpreter", from: "0.2.1"),
 //        .package(name: "SwiftUIInterpreter", url: "https://github.com/App-Maker-Software/SwiftUIInterpreter", .branch("main")), // for private development work
         .package(name: "ExceptionCatcher", url: "https://github.com/sindresorhus/ExceptionCatcher", from: "2.0.0"),
     ],
@@ -40,13 +40,14 @@ let package = Package(
 //            name: "LiveApp",
 //            dependencies: [
 //                "ExceptionCatcher",
-//                .product(name: "SwiftUIInterpreter", package: "SwiftUIInterpreter")
+////                .product(name: "SwiftUIInterpreter", package: "SwiftUIInterpreter")
+//                .product(name: "FlattenedSwiftUIInterpreter", package: "SwiftUIInterpreter")
 //            ],
 //            swiftSettings: [
 //                .define("INCLUDE_DEVELOPER_TOOLS", .when(configuration: .debug)),
 //                .define("INCLUDE_DEVELOPER_LOGGING", .when(configuration: .debug)),
 //                .define("PRODUCTION", .when(configuration: .release)),
-//                .define("_BUILD_FROM_SOURCE")
+////                .define("_BUILD_FROM_SOURCE")
 //            ]
 //        ),
         .testTarget(
