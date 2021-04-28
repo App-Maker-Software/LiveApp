@@ -21,9 +21,11 @@ brew install App-Maker-Software/tools/liveapp
 
 Add this script as a "Run Script" phase to your build phases in Xcode.
 
-```
+```bash
 if ! /usr/bin/liveapp build:bundle ; then
-    /opt/homebrew/bin/liveapp build:bundle
+    if ! /usr/local/bin/liveapp build:bundle ; then
+        /opt/homebrew/bin/liveapp build:bundle
+    fi
 fi
 
 ```
