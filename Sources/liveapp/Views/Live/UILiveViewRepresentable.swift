@@ -30,7 +30,8 @@ public struct DontRegisterWithInterpreter: RegisterWithInterpreter {}
 
 extension UILiveViewRepresentable {
     public var _internal: _InternalLiveUIData {
-        .init(compiledViewGetter: {.init(_UIWildcardViewRepresentable(self))}, protocolName: "UILiveViewRepresentable")
+//        .init(compiledViewGetter: {.init(_UIWildcardViewRepresentable(self))}, protocolName: "UILiveViewRepresentable")
+        .init(protocolName: "UILiveViewRepresentable")
     }
     
     public static var Yes: RegisterWithInterpreter {
