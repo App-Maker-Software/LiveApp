@@ -7,7 +7,7 @@
 
 import Foundation
 #if _BUILD_FROM_SOURCE
-import SwiftUIInterpreter
+import SwiftInterpreterSource
 #else
 import FlattenedSwiftUIInterpreter
 #endif
