@@ -4,7 +4,7 @@
 //
 //  Created by Joseph Hinkle on 4/7/21.
 //
-
+/*
 import Foundation
 
 struct AllViewsJSON: Decodable {
@@ -19,3 +19,4 @@ struct ViewJSON: Decodable {
     let available_on_marketplace: Bool
 //    #endif
 }
+*/

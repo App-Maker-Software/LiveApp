@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+/*
 extension LiveApp {
     public final class Dependencies {
         public static func addCustomDependency(_ dependency: CustomDependency, identifiedBy identifier: DependencyIdentifier = .InitHash()) {
@@ -48,3 +48,4 @@ public struct DependencyIdentifier {
     }
 }
 
+*/

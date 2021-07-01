@@ -4,7 +4,7 @@
 //
 //  Created by Joseph Hinkle on 4/6/21.
 //
-
+/*
 /// Dictates where a live view gets its updated data.
 public enum RemoteRepositoryOption {
     /// `https://api.liveapp.cc/{YOUR_LIVEAPP_ID}/` and `https://data.liveapp.cc/{YOUR_LIVEAPP_ID}/` will be used as the remote repository for live views.
@@ -14,3 +14,4 @@ public enum RemoteRepositoryOption {
     /// No remote repository for live views will be used.
     case NoRemote
 }
+*/

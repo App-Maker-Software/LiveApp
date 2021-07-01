@@ -4,7 +4,7 @@
 //
 //  Created by Joseph Hinkle on 4/7/21.
 //
-
+/*
 import UIKit
 
 func makeClientVersionJSON() -> [String: Any] {
@@ -19,3 +19,4 @@ func makeClientVersionJSON() -> [String: Any] {
         "bundleIdentifier": Bundle.main.bundleIdentifier
     ]
 }
+*/

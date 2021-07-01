@@ -5,6 +5,7 @@
 //  Created by Joseph Hinkle on 4/7/21.
 //
 
+/*
 import Foundation
 import Combine
 #if _BUILD_FROM_SOURCE
@@ -50,13 +51,15 @@ public final class Network {
         .replaceError(with: nil)
         .subscribe(on: Self.liveFileDownloadProcessingQueue)
         .sink { data in
-            if let data = data {
-                try? update_struct_liveview_data(
-                    name: liveViewName,
-                    liveAppId: liveAppId,
-                    liveViewData: data
-                )
-            }
+            fatalError("todo")
+//            if let data = data {
+//                try? update_struct_liveview_data(
+//                    name: liveViewName,
+//                    liveAppId: liveAppId,
+//                    liveViewData: data
+//                )
+//            }
         })
     }
 }
+*/

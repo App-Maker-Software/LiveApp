@@ -10,6 +10,7 @@ import SwiftUI
 extension LiveApp {
     /// Configuration for Live App behavior. You should only set variables here one time and BEFOR you run `LiveApp.setup(...)`.
     public final class Configuration {
+        /*
         #if PRODUCTION
         /// Dictates how often live views will automatically update. We recommend setting automatic refresh to "never" in debug builds to prevent unwanted refreshes. Production builds can also set automatic refreshes to "never" and manually trigger refreshes with "LiveView.refreshAll()" or on individual views with "ExampleLiveView.refresh()".
         public static var automaticallyRefresh: AutomaticRefreshLogic = .every(hours: 1)
@@ -30,6 +31,7 @@ extension LiveApp {
         /// If you set this to false, you will no longer recieve any unprompted popups (setup, license, or demo notication popups). The UI will be suitable to put into production. You can also hide all developer messages building for release (and therefore without the `INCLUDE_DEVELOPER_TOOLS` compiler flag).
         public static var showDeveloperMessages = true
         #endif
+         */
     }
     
     #if INCLUDE_DEVELOPER_TOOLS

@@ -39,11 +39,13 @@ public struct _InternalLiveUIData {
 
 //extension LiveView where LiveBody: View {
 extension LiveView {
+    /*
     /// Force refreshes this live view to download the latest data from its remote repository.
     /// - Parameter upgrade: Dictates how the live view should upgrade to the latest version if a newer version is downloaded. Passing nil defaults to value in `LiveApp.Configuration.defaultUpgradeLogic`.
     static func refresh(upgrade: UpgradeLogic? = nil) {
         fatalError("todo")
     }
+    */
 //    public var source: LiveSource {
 //        fatalError()
 ////        switch LiveApp.Configuration.projectDefaultSource {
@@ -69,7 +71,7 @@ extension LiveUI {
         return try ExceptionCatcher.catch {
             try buildStruct(
                 for: self,
-                allowDebugMessages: LiveApp.Configuration.showDeveloperMessages,
+//                allowDebugMessages: LiveApp.Configuration.showDeveloperMessages,
                 applyModifier: { interpretedView in
                     if let outlineColor =
                         LiveApp.outlineInterpretedViewsColor {
@@ -99,13 +101,14 @@ extension LiveUI {
         do {
             return try buildBody()
         } catch {
-            if LiveApp.Configuration.showDeveloperMessages {
-//                return AnyView(_internal.compiledViewGetter().overlay(NotSetupView()))
-                return AnyView(Text("error").foregroundColor(.red).overlay(NotSetupView()))
-            } else {
-//                return AnyView(_internal.compiledViewGetter())
-                return AnyView(Text("error").foregroundColor(.red))
-            }
+            return AnyView(Text("error").foregroundColor(.red))
+//            if LiveApp.Configuration.showDeveloperMessages {
+////                return AnyView(_internal.compiledViewGetter().overlay(NotSetupView()))
+//                return AnyView(Text("error").foregroundColor(.red).overlay(NotSetupView()))
+//            } else {
+////                return AnyView(_internal.compiledViewGetter())
+//                return AnyView(Text("error").foregroundColor(.red))
+//            }
         }
     }
     #else

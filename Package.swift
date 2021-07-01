@@ -8,8 +8,7 @@ let package = Package(
     platforms: [.iOS(.v13),.macOS(.v11),.watchOS(.v6),.tvOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(name: "LiveApp", targets: ["LiveApp"]),
-        .library(name: "SwiftUIHotReload", targets: ["SwiftUIHotReload"])
+        .library(name: "LiveApp", targets: ["LiveApp"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -17,7 +16,6 @@ let package = Package(
         // todo: move over to the public binary distribution
 //        .package(name: "SwiftInterpreter", url: "https://github.com/App-Maker-Software/SwiftInterpreter", from: "0.2.1"),
         .package(name: "SwiftInterpreterSource", url: "https://github.com/App-Maker-Software/SwiftInterpreterSource", .branch("main")), // for private development work
-        .package(name: "ProjectSyncPackage", url: "https://github.com/App-Maker-Software/ProjectSync", .branch("main")),
         .package(name: "ExceptionCatcher", url: "https://github.com/sindresorhus/ExceptionCatcher", from: "2.0.0"),
     ],
     targets: [
@@ -48,13 +46,6 @@ let package = Package(
                 .define("INCLUDE_DEVELOPER_LOGGING", .when(configuration: .debug)),
                 .define("PRODUCTION", .when(configuration: .release)),
                 .define("_BUILD_FROM_SOURCE")
-            ]
-        ),
-        .target(
-            name: "SwiftUIHotReload",
-            dependencies: [
-                "LiveApp",
-                .product(name: "ProjectSyncClientOnly", package: "ProjectSyncPackage")
             ]
         ),
         .testTarget(
