@@ -9,7 +9,7 @@ import Foundation
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
 #else
-import FlattenedSwiftUIInterpreter
+import SwiftInterpreter
 #endif
 
 /// API for talking with the Live App Swift Package

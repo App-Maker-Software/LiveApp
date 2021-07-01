@@ -11,7 +11,7 @@ import Combine
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
 #else
-import FlattenedSwiftUIInterpreter
+import SwiftInterpreter
 #endif
 
 public final class Network {

@@ -9,7 +9,7 @@ import SwiftUI
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
 #else
-import FlattenedSwiftUIInterpreter
+import SwiftInterpreter
 #endif
 import ExceptionCatcher
 
