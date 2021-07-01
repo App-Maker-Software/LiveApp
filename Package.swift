@@ -8,16 +8,14 @@ let package = Package(
     platforms: [.iOS(.v13),.macOS(.v11),.watchOS(.v6),.tvOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "LiveApp",
-            targets: ["LiveApp"]),
+        .library(name: "LiveApp", targets: ["LiveApp"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         // todo: move over to the public binary distribution
-        .package(name: "BinarySwiftUIInterpreter", url: "https://github.com/App-Maker-Software/BinarySwiftUIInterpreter", from: "0.2.1"),
-//        .package(name: "SwiftUIInterpreter", url: "https://github.com/App-Maker-Software/SwiftUIInterpreter", .branch("main")), // for private development work
+        .package(name: "SwiftInterpreter", url: "https://github.com/App-Maker-Software/SwiftInterpreter", from: "0.3.0"),
+//        .package(name: "SwiftInterpreterSource", url: "https://github.com/App-Maker-Software/SwiftInterpreterSource", .branch("main")), // for private development work
         .package(name: "ExceptionCatcher", url: "https://github.com/sindresorhus/ExceptionCatcher", from: "2.0.0"),
     ],
     targets: [
@@ -27,7 +25,7 @@ let package = Package(
             name: "LiveApp",
             dependencies: [
                 "ExceptionCatcher",
-                "BinarySwiftUIInterpreter"
+                "SwiftInterpreter"
             ],
             swiftSettings: [
                 .define("INCLUDE_DEVELOPER_TOOLS", .when(configuration: .debug)),
@@ -40,8 +38,7 @@ let package = Package(
 //            name: "LiveApp",
 //            dependencies: [
 //                "ExceptionCatcher",
-////                .product(name: "SwiftUIInterpreter", package: "SwiftUIInterpreter")
-//                .product(name: "FlattenedSwiftUIInterpreter", package: "SwiftUIInterpreter")
+//                .product(name: "SwiftInterpreterSource", package: "SwiftInterpreterSource")
 //            ],
 //            swiftSettings: [
 //                .define("INCLUDE_DEVELOPER_TOOLS", .when(configuration: .debug)),
