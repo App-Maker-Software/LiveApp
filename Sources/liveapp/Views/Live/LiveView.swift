@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftInterpreterSource
 #else
 import SwiftInterpreter
+import SwiftInterpreterBinary
 #endif
 import ExceptionCatcher
 

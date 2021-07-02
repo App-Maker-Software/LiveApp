@@ -10,6 +10,7 @@ import Foundation
 import SwiftInterpreterSource
 #else
 import SwiftInterpreter
+import SwiftInterpreterBinary
 #endif
 
 /// API for talking with the Live App Swift Package
@@ -31,7 +32,7 @@ public final class LiveApp {
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             return
         }
-        try! unlock_for_self_hosting(licenseKey: "demo", liveAppBundle: liveAppBundle, connectToHotRefreshServer: true)
+        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true)
     }
     #endif
     /*
