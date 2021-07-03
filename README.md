@@ -4,7 +4,7 @@ This repository hosts both the Swift Package and Homebrew CLI for Live App, a se
 
 The Swift Package adds less than 1 megabyte to your app footprint.
 
-This is under active development, if you would like to contribute or try a demo, contact Joe Hinkle.
+This is under active development, if you would like to contribute or try a demo, contact Joe Hinkle. 
 
 ## Documentation
 
@@ -33,3 +33,9 @@ fi
 ```
 
 Then start using the `LiveView` protocol in place of the SwiftUI `View` for any view you want to be updatable remotely.
+
+## Swift Interpreter
+
+The Swift interpreter is in it's own [repo here](https://github.com/App-Maker-Software/SwiftInterpreter).
+
+While the interpreter mainly excels at interpreter declarative-style SwiftUI code, its eventual goal is to be able to run most imperative-style Swift code too. You can quickly see it's support for various Swift features by looking at the test results automatically written to [this markdown file](https://github.com/App-Maker-Software/SwiftInterpreter/blob/main/TEST_RESULTS.md). You can also run these tests locally yourself if you wish.
