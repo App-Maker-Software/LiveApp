@@ -6,6 +6,25 @@
 //
 
 import SwiftUI
+#if _BUILD_FROM_SOURCE
+import SwiftInterpreterSource
+#else
+import SwiftInterpreter
+import SwiftInterpreterBinary
+#endif
+
+/** Provides a same manner for implementing the Swift interpreter's InterpretableType protocol.
+ It's dangerous to implement InterpretableType by itself, because the LiveApp server will not know which clients have what InterpretableTypes implemented. By only implementing the InterpretableType through LiveApp's LocalDependency, you get an auto-generated hash at compile-time which can be used to identify custom InterpretableTypes by their "_depHash" (dependency hash). A LiveApp server can then ask LiveApp clients to self-report what LocalDependencies they have by passing a list of their _depHashs. Then the server will know if a new LiveElement (i.e. LiveView, LiveFunc, LiveStruct, LiveClass, etc.) can be safely assumed to be supported by the LiveApp client.
+ */
+public protocol LocalDependency: _InterpretableType {
+    /** A unique hash determined at compile-time which is calculated based on this local depedency's Swift AST--including extensions of it--AND the AST of the _InterpretableType implementation (this is required in cases where the underlying type isn't changing, but more of it is being exposed to the interpreter).
+     Any change to the AST of this dependency--including name changes, orders of properties, etc., should trigger it's hash to be recalculated.
+     Debug builds will trigger a runtime crash if it's found that the hash does not match what is expected.
+     */
+    static var _depHash: String { get }
+    
+}
+
 /*
 extension LiveApp {
     public final class Dependencies {
