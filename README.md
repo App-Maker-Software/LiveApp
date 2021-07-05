@@ -4,7 +4,7 @@ This repository hosts both the Swift Package and Homebrew CLI for Live App, a se
 
 The Swift Package adds less than 1 megabyte to your app footprint.
 
-This is under active development, if you would like to contribute or try a demo, contact Joe Hinkle. 
+This is under active development, if you would like to contribute, contact Joe Hinkle. 
 
 ## Fast SwiftUI Previews
 
