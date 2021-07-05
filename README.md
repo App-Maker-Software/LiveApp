@@ -1,10 +1,16 @@
 # Live App
 
-This repository hosts both the Swift Package and Homebrew CLI for Live App, a server-driven SwiftUI solution powered by [App Maker Professional's](https://appmakerios.com) [SwiftUI Interpreter](https://github.com/App-Maker-Software/BinarySwiftUIInterpreter).
+This repository hosts both the Swift Package and Homebrew CLI for Live App, a server-driven SwiftUI solution powered by [App Maker Professional's](https://appmakerios.com) [SwiftUI Interpreter](https://github.com/App-Maker-Software/BinarySwiftUIInterpreter). Also provides extremely "fast SwiftUI previews" for local development.
 
 The Swift Package adds less than 1 megabyte to your app footprint.
 
 This is under active development, if you would like to contribute or try a demo, contact Joe Hinkle. 
+
+## Fast SwiftUI Previews
+
+![liveapp-fruta-demo](https://user-images.githubusercontent.com/8505851/124366056-141a8c80-dc0a-11eb-88cd-0249bf847367.gif)
+
+In the demo GIF above, the app was only compiled *once* before recorded started. ALL updates you see were performed automatically through LiveApp's hot reload server.
 
 ## Documentation
 
