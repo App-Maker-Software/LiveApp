@@ -15,6 +15,11 @@ import SwiftInterpreterBinary
 
 /// API for talking with the Live App Swift Package
 public final class LiveApp {
+    private static func setupShared() {
+        #if DEBUG
+        addActiveCompilationConditionDependency("DEBUG")
+        #endif
+    }
     #if INCLUDE_DEVELOPER_TOOLS
     /// This function configures LiveApp for local development with "hot reload" enabled. While in this mode, Live App will connect to the ip address found in the LiveApp bundle. Go to https://docs.liveapp.cc/ to learn how to install and run the live app hot reload server.
     ///
@@ -33,6 +38,7 @@ public final class LiveApp {
             return
         }
         try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true)
+        setupShared()
     }
     #endif
     /*

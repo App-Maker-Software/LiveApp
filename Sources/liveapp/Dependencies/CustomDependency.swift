@@ -25,6 +25,10 @@ public protocol LocalDependency: _InterpretableType {
     
 }
 
+public func addActiveCompilationConditionDependency(_ condition: String) {
+    // TODO, add to dependencies for live server
+    _addActiveCompilationCondition(condition)
+}
 /*
 extension LiveApp {
     public final class Dependencies {
