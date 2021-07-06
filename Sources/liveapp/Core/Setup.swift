@@ -8,6 +8,8 @@
 import Foundation
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
+#elseif _BUILD_FOR_APP_MAKER
+import SwiftInterpreterPrivate
 #else
 import SwiftInterpreter
 import SwiftInterpreterBinary
