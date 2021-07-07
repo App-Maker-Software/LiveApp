@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "LiveApp",
-    platforms: [.iOS(.v13),.macOS(.v11),.watchOS(.v6),.tvOS(.v13)],
+    platforms: [.iOS(.v11)], // Xcode cannot build before iOS 11 because their SwiftUI header stubs are broken
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "LiveApp", targets: ["LiveApp"])

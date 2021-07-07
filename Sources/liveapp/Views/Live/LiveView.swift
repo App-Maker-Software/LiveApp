@@ -24,6 +24,7 @@ public protocol LiveView: LiveUI {
     @ViewBuilder var liveBody: LiveBody { get }
 }
 #else
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 public protocol LiveView: LiveUI, _IsLiveView {
     associatedtype LiveBody = View
 //    var source: LiveSource { get } // todo
@@ -31,17 +32,19 @@ public protocol LiveView: LiveUI, _IsLiveView {
 }
 public protocol _IsLiveView {}
 #endif
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 public protocol LiveUI: View {
     var _internal: _InternalLiveUIData { get }
 }
 
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 public struct _InternalLiveUIData {
-//    let compiledViewGetter: () -> AnyView
+    let compiledViewGetter: () -> AnyView
     let protocolName: String
 }
 
-//extension LiveView where LiveBody: View {
-extension LiveView {
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+extension LiveView where LiveBody: View {
     /*
     /// Force refreshes this live view to download the latest data from its remote repository.
     /// - Parameter upgrade: Dictates how the live view should upgrade to the latest version if a newer version is downloaded. Passing nil defaults to value in `LiveApp.Configuration.defaultUpgradeLogic`.
@@ -60,10 +63,19 @@ extension LiveView {
 ////        }
 //    }
     public var _internal: _InternalLiveUIData {
-//        .init(compiledViewGetter: {.init(liveBody)}, protocolName: "LiveView")
-        .init(protocolName: "LiveView")
+        .init(compiledViewGetter: {
+            #if INCLUDE_DEVELOPER_TOOLS
+            if LiveApp.Configuration.shared.showOutlines, let outlineColor = LiveApp.Configuration.shared.outlineCompiledViewsColor as? Color {
+                return .init(liveBody.border(outlineColor, width: 1))
+            }
+            return .init(liveBody)
+            #else
+            return .init(liveBody)
+            #endif
+        }, protocolName: "LiveView")
     }
 }
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 extension LiveUI {
     #if INCLUDE_DEVELOPER_TOOLS
     func buildBody() throws -> AnyView {
@@ -76,8 +88,8 @@ extension LiveUI {
                 for: self,
 //                allowDebugMessages: LiveApp.Configuration.showDeveloperMessages,
                 applyModifier: { interpretedView in
-                    if let outlineColor =
-                        LiveApp.outlineInterpretedViewsColor {
+                    if LiveApp.Configuration.shared.showOutlines, let outlineColor =
+                        LiveApp.Configuration.shared.outlineInterpretedViewsColor as? Color {
                         return AnyView(
                             interpretedView.border(outlineColor, width: 1)
                         )
@@ -101,17 +113,22 @@ extension LiveUI {
     #if INCLUDE_DEVELOPER_TOOLS
     /// Recommended for development environments. When built with developer tools, any failure to interpreter the live data will notify the developer with a UI pop up. This helps developers catch configuration issues with Live App quickly.
     public var body: some View {
-        do {
-            return try buildBody()
-        } catch {
-            return AnyView(Text("error").foregroundColor(.red))
-//            if LiveApp.Configuration.showDeveloperMessages {
-////                return AnyView(_internal.compiledViewGetter().overlay(NotSetupView()))
-//                return AnyView(Text("error").foregroundColor(.red).overlay(NotSetupView()))
-//            } else {
-////                return AnyView(_internal.compiledViewGetter())
-//                return AnyView(Text("error").foregroundColor(.red))
-//            }
+        RefreshableView<AnyView> {
+            guard LiveApp.Configuration.shared.interpreterIsOn else {
+                return AnyView(_internal.compiledViewGetter())
+            }
+            do {
+                return try buildBody()
+            } catch {
+                return AnyView(Text("error").foregroundColor(.red))
+    //            if LiveApp.Configuration.showDeveloperMessages {
+    ////                return AnyView(_internal.compiledViewGetter().overlay(NotSetupView()))
+    //                return AnyView(Text("error").foregroundColor(.red).overlay(NotSetupView()))
+    //            } else {
+    ////                return AnyView(_internal.compiledViewGetter())
+    //                return AnyView(Text("error").foregroundColor(.red))
+    //            }
+            }
         }
     }
     #else

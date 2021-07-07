@@ -8,8 +8,22 @@
 import SwiftUI
 
 extension LiveApp {
+    #if INCLUDE_DEVELOPER_TOOLS
+    @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+    static func rebuildAllLiveViewStructs() {
+        _ViewRefresher.shared.objectWillChange.send()
+    }
+    #endif
     /// Configuration for Live App behavior. You should only set variables here one time and BEFOR you run `LiveApp.setup(...)`.
     public final class Configuration {
+        static let shared: Configuration = .init()
+        #if INCLUDE_DEVELOPER_TOOLS
+        var interpreterIsOn = true
+        var showOutlines = false
+        var autoHardReload = false // if true, does hard reloads and not soft reloads
+        var outlineInterpretedViewsColor: Any? = nil // in reality, this is always going to be type Color?, but we use type Any? so that pre-iOS 13 builds are possible
+        var outlineCompiledViewsColor: Any? = nil // in reality, this is always going to be type Color?, but we use type Any? so that pre-iOS 13 builds are possible
+        #endif
         /*
         #if PRODUCTION
         /// Dictates how often live views will automatically update. We recommend setting automatic refresh to "never" in debug builds to prevent unwanted refreshes. Production builds can also set automatic refreshes to "never" and manually trigger refreshes with "LiveView.refreshAll()" or on individual views with "ExampleLiveView.refresh()".
@@ -35,8 +49,6 @@ extension LiveApp {
     }
     
     #if INCLUDE_DEVELOPER_TOOLS
-    static var outlineInterpretedViewsColor: Color? = nil
-    static var outlineCompiledViewsColor: Color? = nil
     /// This will put an outline around all interpreted views and another color around live views which are defaulting to their compiled Swift bodies (usually as a backup or when there's no remote view to be downloaded). Only available if the `INCLUDE_DEVELOPER_TOOLS` compiler flag is present.
     ///
     /// ```
@@ -44,10 +56,14 @@ extension LiveApp {
     /// LiveApp.outlineInterpretedViews(with: .yellow, andCompiledViewsWith: .red)
     /// #endif
     /// ```
+    @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
     public static func outlineInterpretedViews(with color: Color, andCompiledViewsWith compiledColor: Color) {
-        outlineInterpretedViewsColor = color
-        outlineCompiledViewsColor = compiledColor
+        Configuration.shared.outlineInterpretedViewsColor = color
+        Configuration.shared.outlineCompiledViewsColor = compiledColor
+        Configuration.shared.showOutlines = true
     }
     #endif
 }
 
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+extension LiveApp.Configuration: ObservableObject {}
