@@ -9,6 +9,16 @@ import SwiftUI
 
 extension LiveApp {
     #if INCLUDE_DEVELOPER_TOOLS
+    static var destroyedViewAndNeedsToRebuild = false // for facilitating hard reload
+    @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+    static func hardReload() {
+        destroyedViewAndNeedsToRebuild = false
+        rebuildAllLiveViewStructs()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            destroyedViewAndNeedsToRebuild = true
+            rebuildAllLiveViewStructs()
+        }
+    }
     @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
     static func rebuildAllLiveViewStructs() {
         _ViewRefresher.shared.objectWillChange.send()

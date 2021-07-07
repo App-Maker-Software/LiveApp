@@ -114,6 +114,13 @@ extension LiveUI {
     /// Recommended for development environments. When built with developer tools, any failure to interpreter the live data will notify the developer with a UI pop up. This helps developers catch configuration issues with Live App quickly.
     public var body: some View {
         RefreshableView<AnyView> {
+            if LiveApp.Configuration.shared.autoHardReload && !LiveApp.destroyedViewAndNeedsToRebuild {
+                if #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) {
+                    return AnyView(ProgressView())
+                } else {
+                    return AnyView(Image(systemName: "rays").resizable().frame(width: 20, height: 20))
+                }
+            }
             guard LiveApp.Configuration.shared.interpreterIsOn else {
                 return AnyView(_internal.compiledViewGetter())
             }

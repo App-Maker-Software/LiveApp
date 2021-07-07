@@ -41,7 +41,13 @@ public final class LiveApp {
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             return
         }
-        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true)
+        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true, onHotRefresh: {
+            if #available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *), Configuration.shared.autoHardReload && Configuration.shared.interpreterIsOn {
+                DispatchQueue.main.async {
+                    hardReload()
+                }
+            }
+        })
         setupShared()
     }
     #endif

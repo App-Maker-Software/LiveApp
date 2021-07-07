@@ -47,10 +47,14 @@ struct LiveAppBirdView<Content: View>: View {
     private var moreMenu: some View {
         Button {
             LiveApp.Configuration.shared.autoHardReload.toggle()
-            LiveApp.rebuildAllLiveViewStructs()
+            if LiveApp.Configuration.shared.autoHardReload {
+                LiveApp.hardReload()
+            } else {
+                LiveApp.rebuildAllLiveViewStructs()
+            }
         } label: {
-            Label("\(LiveApp.Configuration.shared.autoHardReload ? "Hard" : "Soft") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
-        }
+            Label("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
+        }.disabled(!liveAppConfiguration.interpreterIsOn)
         if LiveApp.Configuration.shared.outlineCompiledViewsColor != nil || LiveApp.Configuration.shared.outlineInterpretedViewsColor != nil {
             Button {
                 LiveApp.Configuration.shared.showOutlines.toggle()
@@ -76,13 +80,13 @@ struct LiveAppBirdView<Content: View>: View {
         Button {
             let autoHardReload = LiveApp.Configuration.shared.autoHardReload
             LiveApp.Configuration.shared.autoHardReload = true
-            LiveApp.rebuildAllLiveViewStructs()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            LiveApp.hardReload()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 LiveApp.Configuration.shared.autoHardReload = autoHardReload
             }
         } label: {
             Label("Hard Reload", systemImage: "arrow.clockwise")
-        }
+        }.disabled(!liveAppConfiguration.interpreterIsOn)
         Button {
             liveAppConfiguration.interpreterIsOn.toggle()
             LiveApp.rebuildAllLiveViewStructs()
