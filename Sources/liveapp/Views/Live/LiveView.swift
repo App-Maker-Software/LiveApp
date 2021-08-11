@@ -15,36 +15,30 @@ import SwiftInterpreterBinary
 #endif
 import ExceptionCatcher
 
-#if STUB
-public protocol LiveView: LiveUI {
+@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+public protocol LiveView: View {
+//public protocol LiveView: LiveUI {
     associatedtype LiveBody = View
 //    var source: LiveSource { get } // todo
     @ViewBuilder var liveBody: LiveBody { get }
-}
-#else
-@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
-public protocol LiveView: LiveUI, _IsLiveView {
-    associatedtype LiveBody = View
-//    var source: LiveSource { get } // todo
-    @ViewBuilder var liveBody: LiveBody { get }
-}
-public protocol _IsLiveView {}
-#endif
-@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
-public protocol LiveUI: View {
-    #if !STUB
-    var _internal: _InternalLiveUIData { get }
-    #endif
 }
 
-#if !STUB
-@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
-public struct _InternalLiveUIData {
-    let compiledViewGetter: () -> AnyView
-    let protocolName: String
-}
-@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
-extension LiveView where LiveBody: View {
+//@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+//public protocol LiveUI: View {
+//    #if !STUB
+//    var _internal: _InternalLiveUIData { get }
+//    #endif
+//    var compiledView: AnyView { get }
+//}
+
+//#if !STUB
+//@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+//public struct _InternalLiveUIData {
+//    let compiledViewGetter: () -> AnyView
+//    let protocolName: String
+//}
+//@available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+//extension LiveView where LiveBody: View {
     /*
     /// Force refreshes this live view to download the latest data from its remote repository.
     /// - Parameter upgrade: Dictates how the live view should upgrade to the latest version if a newer version is downloaded. Passing nil defaults to value in `LiveApp.Configuration.defaultUpgradeLogic`.
@@ -62,28 +56,29 @@ extension LiveView where LiveBody: View {
 ////            return .remoteRepository(liveViewName: structName)
 ////        }
 //    }
-    public var _internal: _InternalLiveUIData {
-        .init(compiledViewGetter: {
-            #if INCLUDE_DEVELOPER_TOOLS
-            if LiveApp.Configuration.shared.showOutlines, let outlineColor = LiveApp.Configuration.shared.outlineCompiledViewsColor as? Color {
-                return .init(liveBody.border(outlineColor, width: 1))
-            }
-            return .init(liveBody)
-            #else
-            return .init(liveBody)
-            #endif
-        }, protocolName: "LiveView")
-    }
-}
-#endif
+//    public var _internal: _InternalLiveUIData {
+//        .init(compiledViewGetter: {
+//            #if INCLUDE_DEVELOPER_TOOLS
+//            if LiveApp.Configuration.shared.showOutlines, let outlineColor = LiveApp.Configuration.shared.outlineCompiledViewsColor as? Color {
+//                return .init(liveBody.border(outlineColor, width: 1))
+//            }
+//            return .init(liveBody)
+//            #else
+//            return .init(liveBody)
+//            #endif
+//        }, protocolName: "LiveView")
+//    }
+//}
+//#endif
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
-extension LiveUI {
+extension LiveView where LiveBody: View {
+//extension LiveUI {
     #if INCLUDE_DEVELOPER_TOOLS
     func buildBody() throws -> AnyView {
-        if _internal.protocolName == "UILiveViewRepresentablex" {
-//            return AnyView(_internal.compiledViewGetter())
-            return AnyView(Text("todo!").foregroundColor(.red))
-        }
+//        if _internal.protocolName == "UILiveViewRepresentablex" {
+////            return AnyView(_internal.compiledViewGetter())
+//            return AnyView(Text("todo!").foregroundColor(.red))
+//        }
         return try ExceptionCatcher.catch {
             try buildStruct(
                 for: self,
@@ -127,7 +122,8 @@ extension LiveUI {
                 }
             }
             guard LiveApp.Configuration.shared.interpreterIsOn else {
-                return AnyView(_internal.compiledViewGetter())
+                return AnyView(liveBody)
+//                return AnyView(_internal.compiledViewGetter())
             }
             do {
                 return try buildBody()
