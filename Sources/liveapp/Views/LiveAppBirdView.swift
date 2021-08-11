@@ -11,12 +11,11 @@ import SwiftUI
 import SwiftInterpreterSource
 #elseif _BUILD_FOR_APP_MAKER
 import SwiftInterpreterPrivate
-#else
-import SwiftInterpreter
+#elseif canImport(SwiftInterpreterBinary)
 import SwiftInterpreterBinary
 #endif
 
-@available(iOS 14.0, macOS 10.15, *)
+@available(iOS 13.0, macOS 10.15, *)
 struct LiveAppBirdView<Content: View>: View {
     @Environment (\.colorScheme) var colorScheme: ColorScheme
     
@@ -53,30 +52,14 @@ struct LiveAppBirdView<Content: View>: View {
                 LiveApp.rebuildAllLiveViewStructs()
             }
         } label: {
-            if #available(macOS 11.0, iOS 14.0, *) {
-                Label("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
-            } else {
-                HStack {
-                    if #available(macOS 11.0, *) {
-                        Image(systemName: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
-                    }
-                    Text("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update")
-                }
-            }
+            SupportLabel("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
         }.disabled(!liveAppConfiguration.interpreterIsOn)
         if LiveApp.Configuration.shared.outlineCompiledViewsColor != nil || LiveApp.Configuration.shared.outlineInterpretedViewsColor != nil {
             Button {
                 LiveApp.Configuration.shared.showOutlines.toggle()
                 LiveApp.rebuildAllLiveViewStructs()
             } label: {
-                if #available(macOS 11.0, iOS 14.0, *) {
-                    Label("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines", systemImage: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
-                } else {
-                    if #available(macOS 11.0, *) {
-                        Image(systemName: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
-                    }
-                    Text("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines")
-                }
+                SupportLabel("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines", systemImage: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
             }
         }
         Button {
@@ -109,23 +92,23 @@ struct LiveAppBirdView<Content: View>: View {
                 LiveApp.Configuration.shared.autoHardReload = autoHardReload
             }
         } label: {
-            Label("Hard Reload", systemImage: "arrow.clockwise")
+            SupportLabel("Hard Reload", systemImage: "arrow.clockwise")
         }.disabled(!liveAppConfiguration.interpreterIsOn)
         Button {
             liveAppConfiguration.interpreterIsOn.toggle()
             LiveApp.rebuildAllLiveViewStructs()
         } label: {
-            Label("Turn \(liveAppConfiguration.interpreterIsOn ? "off" : "on") Interpreter", systemImage: liveAppConfiguration.interpreterIsOn ? "power" : "togglepower")
+            SupportLabel("Turn \(liveAppConfiguration.interpreterIsOn ? "off" : "on") Interpreter", systemImage: liveAppConfiguration.interpreterIsOn ? "power" : "togglepower")
         }
-        Menu {
+        SupportMenu {
             moreMenu
         } label: {
-            Label("More", systemImage: "ellipsis")
+            SupportLabel("More", systemImage: "ellipsis")
         }
     }
     
     private var birdBase: some View {
-        Menu { menu } label: {
+        SupportMenu { menu } label: {
             Image("bird", bundle: Bundle.module)
                 .resizable()
                 .scaledToFit()
@@ -199,4 +182,41 @@ public extension View {
     }
 }
 
+@available(iOS 13.0, macOS 10.15, *)
+struct SupportMenu<T: View, U: View>: View {
+    let content: () -> T
+    let label: () -> U
+    
+    var body: some View {
+        if #available(macOS 11.0, iOS 14.0, *) {
+            Menu(content: content, label: label)
+        } else {
+            label().contextMenu(ContextMenu(menuItems: content))
+        }
+    }
+}
+
+@available(iOS 13.0, macOS 10.15, *)
+struct SupportLabel: View {
+    let title: String
+    let systemImage: String
+    
+    init(_ title: String, systemImage: String) {
+        self.title = title
+        self.systemImage = systemImage
+    }
+    
+    var body: some View {
+        if #available(macOS 11.0, iOS 14.0, *) {
+            Label(title, systemImage: systemImage)
+        } else {
+            HStack {
+                if #available(macOS 11.0, *) {
+                    Image(systemName: systemImage)
+                }
+                Text(title)
+            }
+        }
+    }
+}
 #endif

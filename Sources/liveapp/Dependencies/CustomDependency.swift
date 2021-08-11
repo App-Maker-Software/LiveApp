@@ -11,8 +11,7 @@ import SwiftUI
 import SwiftInterpreterSource
 #elseif _BUILD_FOR_APP_MAKER
 import SwiftInterpreterPrivate
-#else
-import SwiftInterpreter
+#elseif canImport(SwiftInterpreterBinary)
 import SwiftInterpreterBinary
 #endif
 

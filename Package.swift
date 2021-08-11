@@ -24,9 +24,8 @@ let package = Package(
         .target(
             name: "LiveApp",
             dependencies: [
-                "ExceptionCatcher"
-//                .target(name: "SwiftInterpreterDebu")
-                
+                "ExceptionCatcher",
+                .product(name: "SwiftInterpreterDebugOnly", package: "SwiftInterpreter")
             ],
             swiftSettings: [
                 .define("INCLUDE_DEVELOPER_TOOLS", .when(configuration: .debug)),
