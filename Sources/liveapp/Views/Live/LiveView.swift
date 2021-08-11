@@ -16,8 +16,7 @@ import SwiftInterpreterBinary
 #endif
 import ExceptionCatcher
 
-#if PRODUCTION
-public typealias LiveViewStub = LiveView
+#if STUB
 public protocol LiveView: LiveUI {
     associatedtype LiveBody = View
 //    var source: LiveSource { get } // todo
@@ -34,15 +33,17 @@ public protocol _IsLiveView {}
 #endif
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 public protocol LiveUI: View {
+    #if !STUB
     var _internal: _InternalLiveUIData { get }
+    #endif
 }
 
+#if !STUB
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 public struct _InternalLiveUIData {
     let compiledViewGetter: () -> AnyView
     let protocolName: String
 }
-
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 extension LiveView where LiveBody: View {
     /*
@@ -75,6 +76,7 @@ extension LiveView where LiveBody: View {
         }, protocolName: "LiveView")
     }
 }
+#endif
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
 extension LiveUI {
     #if INCLUDE_DEVELOPER_TOOLS
@@ -100,7 +102,7 @@ extension LiveUI {
             )
         }
     }
-    #else
+    #elseif !STUB
     func buildBody() throws -> AnyView {
         try ExceptionCatcher.catch {
             try buildStruct(
@@ -118,7 +120,11 @@ extension LiveUI {
                 if #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) {
                     return AnyView(ProgressView())
                 } else {
-                    return AnyView(Image(systemName: "rays").resizable().frame(width: 20, height: 20))
+                    if #available(macOS 11.0, *) {
+                        return AnyView(Image(systemName: "rays").resizable().frame(width: 20, height: 20))
+                    } else {
+                        return AnyView(Text("Loading...").frame(width: 20, height: 20))
+                    }
                 }
             }
             guard LiveApp.Configuration.shared.interpreterIsOn else {
@@ -138,11 +144,14 @@ extension LiveUI {
             }
         }
     }
+    #elseif STUB
+    public var body: some View {
+        AnyView(liveBody)
+    }
     #else
     /// Recommended for production environments. When built without developer tools, any failure to interpreter the live data will default to rendering the normal compiled SwiftUI view. This ensures that the end user never sees an error message regarding any Live App errors.
     public var body: some View {
-//        (try? buildBody()) ?? AnyView(liveBody)
-        (try? buildBody()) ?? AnyView(Text("FAILED!").foregroundColor(.red))
+        (try? buildBody()) ?? AnyView(liveBody)
     }
     #endif
 }

@@ -5,6 +5,7 @@
 //  Created by Joseph Hinkle on 4/10/21.
 //
 
+#if !STUB
 import SwiftUI
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
@@ -74,3 +75,5 @@ public struct DependencyIdentifier {
 }
 
 */
+
+#endif

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#if !STUB
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
 #elseif _BUILD_FOR_APP_MAKER
@@ -14,9 +15,11 @@ import SwiftInterpreterPrivate
 import SwiftInterpreter
 import SwiftInterpreterBinary
 #endif
+#endif
 
 /// API for talking with the Live App Swift Package
 public final class LiveApp {
+    #if !STUB
     static var hasSetup = false
     private static func setupShared() {
         #if DEBUG
@@ -41,13 +44,15 @@ public final class LiveApp {
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             return
         }
-        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true, onHotRefresh: {
-            if #available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *), Configuration.shared.autoHardReload && Configuration.shared.interpreterIsOn {
-                DispatchQueue.main.async {
-                    hardReload()
-                }
-            }
-        })
+        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true)
+        // for interpreter 0.4.5
+//        try! unlock_demo(liveAppBundle: liveAppBundle, connectToHotRefreshServer: true, onHotRefresh: {
+//            if #available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *), Configuration.shared.autoHardReload && Configuration.shared.interpreterIsOn {
+//                DispatchQueue.main.async {
+//                    hardReload()
+//                }
+//            }
+//        })
         setupShared()
     }
     #endif
@@ -68,7 +73,7 @@ public final class LiveApp {
         remoteRepository: RemoteRepositoryOption
     ) {
         guard let liveAppBundleUrl = Bundle.main.url(forResource: "LiveApp", withExtension: "bundle"), let liveAppBundle = Bundle(url: liveAppBundleUrl) else {
-            #if INCLUDE_DEVELOPER_LOGGING
+            #if INCLUDE_DEVELOPER_TOOLS
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             #endif
             return
@@ -95,7 +100,7 @@ public final class LiveApp {
     /// - Parameter apiKey: API key for your live app. Go to `https://liveapp.cc/home` to get your API key.
     public static func configure(apiKey: String) {
         guard let liveAppBundleUrl = Bundle.main.url(forResource: "LiveApp", withExtension: "bundle"), let liveAppBundle = Bundle(url: liveAppBundleUrl) else {
-            #if INCLUDE_DEVELOPER_LOGGING
+            #if INCLUDE_DEVELOPER_TOOLS
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             #endif
             return
@@ -148,4 +153,5 @@ public final class LiveApp {
     }
     #endif
     */
+    #endif
 }

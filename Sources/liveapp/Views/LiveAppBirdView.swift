@@ -16,7 +16,7 @@ import SwiftInterpreter
 import SwiftInterpreterBinary
 #endif
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 10.15, *)
 struct LiveAppBirdView<Content: View>: View {
     @Environment (\.colorScheme) var colorScheme: ColorScheme
     
@@ -53,30 +53,54 @@ struct LiveAppBirdView<Content: View>: View {
                 LiveApp.rebuildAllLiveViewStructs()
             }
         } label: {
-            Label("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
+            if #available(macOS 11.0, iOS 14.0, *) {
+                Label("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
+            } else {
+                HStack {
+                    if #available(macOS 11.0, *) {
+                        Image(systemName: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
+                    }
+                    Text("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update")
+                }
+            }
         }.disabled(!liveAppConfiguration.interpreterIsOn)
         if LiveApp.Configuration.shared.outlineCompiledViewsColor != nil || LiveApp.Configuration.shared.outlineInterpretedViewsColor != nil {
             Button {
                 LiveApp.Configuration.shared.showOutlines.toggle()
                 LiveApp.rebuildAllLiveViewStructs()
             } label: {
-                Label("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines", systemImage: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
+                if #available(macOS 11.0, iOS 14.0, *) {
+                    Label("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines", systemImage: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
+                } else {
+                    if #available(macOS 11.0, *) {
+                        Image(systemName: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
+                    }
+                    Text("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines")
+                }
             }
         }
         Button {
             askIfHideBird = true
         } label: {
-            Label("Hide Bird", systemImage: "eye.slash")
+            if #available(macOS 11.0, iOS 14.0, *) {
+                Label("Hide Bird", systemImage: "eye.slash")
+            } else {
+                if #available(macOS 11.0, *) {
+                    Image(systemName: "eye.slash")
+                }
+                Text("Hide Bird")
+            }
         }
     }
     
     @ViewBuilder
     private var menu: some View {
-        Button {
-            _xcodeBuildAndRun()
-        } label: {
-            Label("Rebuild with Xcode", systemImage: "hammer.fill")
-        }
+        // for interpreter 0.4.5
+//        Button {
+//            _xcodeBuildAndRun()
+//        } label: {
+//            Label("Rebuild with Xcode", systemImage: "hammer.fill")
+//        }
         Button {
             let autoHardReload = LiveApp.Configuration.shared.autoHardReload
             LiveApp.Configuration.shared.autoHardReload = true
@@ -165,7 +189,7 @@ struct LiveAppBirdView<Content: View>: View {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 10.15, *)
 public extension View {
     func setupLiveApp() -> some View {
         if !LiveApp.hasSetup {
