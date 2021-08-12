@@ -54,20 +54,20 @@ struct LiveAppBirdView<Content: View>: View {
             }
         } label: {
             SupportLabel("\(LiveApp.Configuration.shared.autoHardReload ? "Soft" : "Hard") Reload on Update", systemImage: "circle.dashed\(LiveApp.Configuration.shared.autoHardReload ? ".inset.fill" : "")")
-        }.disabled(!liveAppConfiguration.interpreterIsOn)
+        }.buttonStyle(PlainButtonStyle()).disabled(!liveAppConfiguration.interpreterIsOn)
         if LiveApp.Configuration.shared.outlineCompiledViewsColor != nil || LiveApp.Configuration.shared.outlineInterpretedViewsColor != nil {
             Button {
                 LiveApp.Configuration.shared.showOutlines.toggle()
                 LiveApp.rebuildAllLiveViewStructs()
             } label: {
                 SupportLabel("\(LiveApp.Configuration.shared.showOutlines ? "Hide" : "Show") Outlines", systemImage: "square\(LiveApp.Configuration.shared.showOutlines ? ".slash" : "")")
-            }
+            }.buttonStyle(PlainButtonStyle())
         }
         Button {
             askIfHideBird = true
         } label: {
             SupportLabel("Hide Bird", systemImage: "eye.slash")
-        }
+        }.buttonStyle(PlainButtonStyle())
     }
     
     @ViewBuilder
@@ -76,7 +76,7 @@ struct LiveAppBirdView<Content: View>: View {
             _xcodeBuildAndRun()
         } label: {
             SupportLabel("Rebuild with Xcode", systemImage: "hammer.fill")
-        }
+        }.buttonStyle(PlainButtonStyle())
         Button {
             let autoHardReload = LiveApp.Configuration.shared.autoHardReload
             LiveApp.Configuration.shared.autoHardReload = true
@@ -86,13 +86,13 @@ struct LiveAppBirdView<Content: View>: View {
             }
         } label: {
             SupportLabel("Hard Reload", systemImage: "arrow.clockwise")
-        }.disabled(!liveAppConfiguration.interpreterIsOn)
+        }.buttonStyle(PlainButtonStyle()).disabled(!liveAppConfiguration.interpreterIsOn)
         Button {
             liveAppConfiguration.interpreterIsOn.toggle()
             LiveApp.rebuildAllLiveViewStructs()
         } label: {
             SupportLabel("Turn \(liveAppConfiguration.interpreterIsOn ? "off" : "on") Interpreter", systemImage: liveAppConfiguration.interpreterIsOn ? "power" : "togglepower")
-        }
+        }.buttonStyle(PlainButtonStyle())
         SupportMenu {
             moreMenu
         } label: {
@@ -150,6 +150,9 @@ struct LiveAppBirdView<Content: View>: View {
     }
     
     var body: some View {
+        Image("bird", bundle: Bundle.module)
+        Text("y")
+        Image("bird", bundle: Bundle.module)
         if hideBird {
             baseView.id("_baseView")
         } else {
@@ -200,6 +203,7 @@ struct SupportMenu<T: View, U: View>: View {
         #else
         if #available(macOS 11.0, iOS 14.0, *) {
             Menu(content: content, label: label)
+                .menuStyle(BorderlessButtonMenuStyle())
         } else {
             backupView
         }
