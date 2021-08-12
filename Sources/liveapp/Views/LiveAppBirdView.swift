@@ -23,6 +23,7 @@ struct LiveAppBirdView<Content: View>: View {
     let baseView: Content
     
     @ObservedObject private var liveAppConfiguration = LiveApp.Configuration.shared
+    @ObservedObject private var birdImage = BirdImage.shared
     
     @State private var prevPositionX: CGFloat = .greatestFiniteMagnitude
     @State private var prevPositionY: CGFloat = .greatestFiniteMagnitude
@@ -102,7 +103,7 @@ struct LiveAppBirdView<Content: View>: View {
     
     private var birdBase: some View {
         SupportMenu { menu } label: {
-            Image("bird", bundle: Bundle.module)
+            birdImage.getBird()
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)
@@ -150,9 +151,6 @@ struct LiveAppBirdView<Content: View>: View {
     }
     
     var body: some View {
-        Image("bird", bundle: Bundle.module)
-        Text("y")
-        Image("bird", bundle: Bundle.module)
         if hideBird {
             baseView.id("_baseView")
         } else {
@@ -231,6 +229,82 @@ struct SupportLabel: View {
                 #endif
                 Text(title)
             }
+        }
+    }
+}
+
+
+#if os(macOS)
+typealias PlatImage = NSImage
+@available(macOS 10.15, *)
+extension Image {
+    init(platImage: PlatImage) {
+        self.init(nsImage: platImage)
+    }
+}
+#else
+typealias PlatImage = UIImage
+@available(iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+extension Image {
+    init(platImage: PlatImage) {
+        self.init(uiImage: platImage)
+    }
+}
+#endif
+
+
+@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 13.0, *)
+final class BirdImage: ObservableObject {
+    static let shared = BirdImage()
+    private var bird: Image?
+    private var isLoading = false
+    private var cacheURL: URL {
+        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        let cacheDirectoryPath = arrayPaths[0]
+        return cacheDirectoryPath.appendingPathComponent("live_app_bird.png")
+    }
+    func getBird() -> Image {
+        if let bird = bird {
+            return bird
+        } else if FileManager.default.fileExists(atPath: cacheURL.path),
+                  let data = try? Data(contentsOf: cacheURL),
+                  let image = PlatImage(data: data) {
+            self.bird = Image(platImage: image)
+            return getBird()
+        }
+        if isLoading {
+            if #available(macOS 11.0, *) {
+                return Image(systemName: "swift")
+            } else {
+                return Image("")
+            }
+        }
+        isLoading = true
+        let birdURL = URL(string: "https://github.com/App-Maker-Software/LiveApp/raw/develop/bird.png")!
+        URLSession.shared.dataTask(with: birdURL, completionHandler: { data, response, error in
+            DispatchQueue.main.async {
+                guard let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                    let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                    let data = data, error == nil,
+                    let image = PlatImage(data: data)
+                    else {
+                    self.isLoading = false
+                    return
+                }
+                #if os(iOS)
+                self.bird = Image(uiImage: image)
+                try? data.write(to: self.cacheURL)
+                #else
+                self.bird = Image(platImage: image)
+                #endif
+                self.objectWillChange.send()
+                self.isLoading = false
+            }
+        }).resume()
+        if #available(macOS 11.0, *) {
+            return Image(systemName: "swift")
+        } else {
+            return Image("")
         }
     }
 }
