@@ -20,10 +20,18 @@ import SwiftInterpreterBinary
 public final class LiveApp {
     #if !STUB
     static var hasSetup = false
-    private static func setupShared() {
-        #if DEBUG
-        addActiveCompilationConditionDependency("DEBUG")
-        #endif
+    private static func setupShared(localDependencies: [LocalDependency.Type], liveAppBundle: Bundle) {
+        localDependencies.registerAll()
+        if let filepath = liveAppBundle.path(forResource: "activecompilationconditions", ofType: "json") {
+            do {
+                let contents = try Data(contentsOf: URL(fileURLWithPath: filepath))
+                let decoder = JSONDecoder()
+                let activeCompilationConditions = try decoder.decode(ActiveCompilationConditions.self, from: contents)
+                for condition in activeCompilationConditions.conditions {
+                    _addActiveCompilationCondition(condition)
+                }
+            } catch {}
+        }
         LiveApp.hasSetup = true
     }
     #if INCLUDE_DEVELOPER_TOOLS
@@ -38,7 +46,11 @@ public final class LiveApp {
     ///
     /// - Parameter licenseKey: Enterprise license key. Pass `"demo"` to demo self-hosting.
     /// - Parameter remoteRepository: URL to download self-hosted live views. Pass `.LiveAppCC` to continue using the service provided by liveapp.cc.
-    public static func configureHotReloadSession() {
+    @available(iOS, deprecated: 13.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(macOS, deprecated: 10.15, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(tvOS, deprecated: 13.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(watchOS, deprecated: 6.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    public static func configureHotReloadSession(localDependencies: [LocalDependency.Type]) {
         guard let liveAppBundleUrl = Bundle.main.url(forResource: "LiveApp", withExtension: "bundle"), let liveAppBundle = Bundle(url: liveAppBundleUrl) else {
             print("Missing LiveApp.bundle in target. See \(liveAppDocsLink) for more information.")
             return
@@ -50,7 +62,7 @@ public final class LiveApp {
                 }
             }
         })
-        setupShared()
+        setupShared(localDependencies: localDependencies, liveAppBundle: liveAppBundle)
     }
     #endif
     /*

@@ -5,7 +5,9 @@
 //  Created by Joseph Hinkle on 4/10/21.
 //
 
-#if !STUB
+#if STUB
+public protocol LocalDependency {}
+#else
 import SwiftUI
 #if _BUILD_FROM_SOURCE
 import SwiftInterpreterSource
@@ -44,8 +46,10 @@ extension LocalDependency {
     }
 }
 
+/// Add an active compilation condition in the Swift Interpreter context. i.e. #if DEBUG would be true in the interpreted context if you run addActiveCompilationConditionDependency("DEBUG")
+@available(*, deprecated, message: "Active compilation conditions are now automatically added to your LiveApp bundle via liveapp xcode:injectliveappbundle")
 public func addActiveCompilationConditionDependency(_ condition: String) {
-    // TODO, add to dependencies for live server
+    // TODO, add to dependencies for live server, as in this client should be reporting to the server what active compilation condition flags it has
     _addActiveCompilationCondition(condition)
 }
 /*
@@ -91,5 +95,13 @@ public struct DependencyIdentifier {
 }
 
 */
+
+extension Array where Element == LocalDependency.Type {
+    func registerAll() {
+        for el in self {
+            el.register()
+        }
+    }
+}
 
 #endif

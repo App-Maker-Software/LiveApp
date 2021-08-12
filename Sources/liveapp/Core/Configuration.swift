@@ -67,6 +67,10 @@ extension LiveApp {
     /// #endif
     /// ```
     @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
+    @available(iOS, deprecated: 13.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(macOS, deprecated: 10.15, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(tvOS, deprecated: 13.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
+    @available(watchOS, deprecated: 6.0, message: "You should use the SwiftUI modifier setupLiveApp instead")
     public static func outlineInterpretedViews(with color: Color, andCompiledViewsWith compiledColor: Color) {
         Configuration.shared.outlineInterpretedViewsColor = color
         Configuration.shared.outlineCompiledViewsColor = compiledColor

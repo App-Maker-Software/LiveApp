@@ -16,7 +16,7 @@ import SwiftInterpreterPrivate
 import SwiftInterpreterBinary
 #endif
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 14.0, *)
+@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 13.0, *)
 struct LiveAppBirdView<Content: View>: View {
     @Environment (\.colorScheme) var colorScheme: ColorScheme
     
@@ -75,6 +75,7 @@ struct LiveAppBirdView<Content: View>: View {
         }.buttonStyle(PlainButtonStyle())
     }
     
+    @available(tvOS 14.0, *)
     @ViewBuilder
     private var menu: some View {
         Button {
@@ -105,6 +106,7 @@ struct LiveAppBirdView<Content: View>: View {
         }
     }
     
+    @available(tvOS 14.0, *)
     private var birdBase: some View {
         #if os(macOS)
 //        HStack {
@@ -150,6 +152,7 @@ struct LiveAppBirdView<Content: View>: View {
         #endif
     }
     
+    @available(tvOS 14.0, *)
     private func bird(geo: GeometryProxy) -> some View {
         #if os(tvOS)
         birdBase
@@ -194,14 +197,14 @@ struct LiveAppBirdView<Content: View>: View {
         #endif
     }
     
-    var body: some View {
+    @available(tvOS 14.0, *)
+    @ViewBuilder
+    var mainBody: some View {
         if hideBird {
             baseView.id("_baseView")
         } else {
             GeometryReader { geo in
-                baseView.id("_baseView")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .overlay(bird(geo: geo))
+                baseView.id("_baseView").overlay(bird(geo: geo))
             }.alert(isPresented: $askIfHideBird) {
                 Alert(
                     title: Text("Hide Bird?"),
@@ -214,15 +217,17 @@ struct LiveAppBirdView<Content: View>: View {
             }
         }
     }
-}
-
-@available(iOS 14.0, macOS 10.15, watchOS 6.0, tvOS 14.0, *)
-public extension View {
-    func setupLiveApp() -> some View {
-        if !LiveApp.hasSetup {
-            LiveApp.configureHotReloadSession()
+    
+    var body: some View {
+        #if os(tvOS)
+        if #available(tvOS 14.0, *) {
+            mainBody
+        } else {
+            baseView
         }
-        return LiveAppBirdView(baseView: self)
+        #else
+        mainBody
+        #endif
     }
 }
 
