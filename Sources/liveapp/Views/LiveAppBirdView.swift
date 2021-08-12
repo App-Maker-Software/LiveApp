@@ -5,6 +5,7 @@
 //  Created by Joseph Hinkle on 7/6/21.
 //
 
+#if !STUB
 #if INCLUDE_DEVELOPER_TOOLS
 import SwiftUI
 #if _BUILD_FROM_SOURCE
@@ -15,7 +16,7 @@ import SwiftInterpreterPrivate
 import SwiftInterpreterBinary
 #endif
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 14.0, *)
 struct LiveAppBirdView<Content: View>: View {
     @Environment (\.colorScheme) var colorScheme: ColorScheme
     
@@ -65,25 +66,17 @@ struct LiveAppBirdView<Content: View>: View {
         Button {
             askIfHideBird = true
         } label: {
-            if #available(macOS 11.0, iOS 14.0, *) {
-                Label("Hide Bird", systemImage: "eye.slash")
-            } else {
-                if #available(macOS 11.0, *) {
-                    Image(systemName: "eye.slash")
-                }
-                Text("Hide Bird")
-            }
+            SupportLabel("Hide Bird", systemImage: "eye.slash")
         }
     }
     
     @ViewBuilder
     private var menu: some View {
-        // for interpreter 0.4.5
-//        Button {
-//            _xcodeBuildAndRun()
-//        } label: {
-//            Label("Rebuild with Xcode", systemImage: "hammer.fill")
-//        }
+        Button {
+            _xcodeBuildAndRun()
+        } label: {
+            SupportLabel("Rebuild with Xcode", systemImage: "hammer.fill")
+        }
         Button {
             let autoHardReload = LiveApp.Configuration.shared.autoHardReload
             LiveApp.Configuration.shared.autoHardReload = true
@@ -120,6 +113,11 @@ struct LiveAppBirdView<Content: View>: View {
     }
     
     private func bird(geo: GeometryProxy) -> some View {
+        #if os(tvOS)
+        birdBase
+            .offset(x: clipX(positionX, geo: geo), y: clipY(positionY, geo: geo))
+            .animation(nil)
+        #else
         birdBase
             .offset(x: clipX(positionX, geo: geo), y: clipY(positionY, geo: geo))
             .animation(nil)
@@ -148,6 +146,7 @@ struct LiveAppBirdView<Content: View>: View {
                 prevPositionX = positionX
                 prevPositionY = positionY
             })
+        #endif
     }
     
     var body: some View {
@@ -172,7 +171,7 @@ struct LiveAppBirdView<Content: View>: View {
     }
 }
 
-@available(iOS 14.0, macOS 10.15, *)
+@available(iOS 14.0, macOS 10.15, watchOS 6.0, tvOS 14.0, *)
 public extension View {
     func setupLiveApp() -> some View {
         if !LiveApp.hasSetup {
@@ -182,21 +181,33 @@ public extension View {
     }
 }
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 14.0, *)
 struct SupportMenu<T: View, U: View>: View {
     let content: () -> T
     let label: () -> U
     
+    #if !os(tvOS)
+    var backupView: some View {
+        label().contextMenu(ContextMenu(menuItems: content))
+    }
+    #endif
+    
     var body: some View {
+        #if os(tvOS)
+        self.contextMenu(menuItems: content)
+        #elseif os(watchOS)
+        backupView
+        #else
         if #available(macOS 11.0, iOS 14.0, *) {
             Menu(content: content, label: label)
         } else {
-            label().contextMenu(ContextMenu(menuItems: content))
+            backupView
         }
+        #endif
     }
 }
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13.0, macOS 10.15, watchOS 6.0, tvOS 13.0, *)
 struct SupportLabel: View {
     let title: String
     let systemImage: String
@@ -207,16 +218,17 @@ struct SupportLabel: View {
     }
     
     var body: some View {
-        if #available(macOS 11.0, iOS 14.0, *) {
+        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
             Label(title, systemImage: systemImage)
         } else {
             HStack {
-                if #available(macOS 11.0, *) {
-                    Image(systemName: systemImage)
-                }
+                #if !os(macOS)
+                Image(systemName: systemImage)
+                #endif
                 Text(title)
             }
         }
     }
 }
+#endif
 #endif

@@ -5,6 +5,7 @@
 //  Created by Joseph Hinkle on 7/7/21.
 //
 
+#if !STUB
 import SwiftUI
 
 @available(macOS 10.15, watchOS 6.0, tvOS 13.0, iOS 13.0, *)
@@ -23,3 +24,4 @@ struct RefreshableView<Body: View>: View {
         buildBody()
     }
 }
+#endif
