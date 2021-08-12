@@ -8,7 +8,9 @@ let package = Package(
     platforms: [.iOS(.v11)], // Xcode cannot build before iOS 11 because their SwiftUI header stubs are broken
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(name: "LiveApp", targets: ["LiveApp"])
+        .library(name: "LiveApp", targets: ["LiveApp"]),
+        // cli installer
+        .executable(name: "liveappi", targets: ["LiveAppCLIInstaller"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -20,8 +22,6 @@ let package = Package(
         .package(url: "https://github.com/wickwirew/Runtime.git", from: "2.2.2"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "LiveApp",
             dependencies: [
@@ -35,6 +35,9 @@ let package = Package(
                 .define("PRODUCTION", .when(configuration: .release)),
                 .define("STUB", .when(configuration: .release))
             ]
+        ),
+        .target(
+            name: "LiveAppCLIInstaller"
         ),
 //        // This is for internal development at App Maker Software LLC. If you are interested in joining the team, contact Joe Hinkle
 //        .target(
