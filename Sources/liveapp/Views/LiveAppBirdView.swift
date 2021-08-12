@@ -38,14 +38,14 @@ struct LiveAppBirdView<Content: View>: View {
     
     private func clipX(_ x: CGFloat, geo: GeometryProxy) -> CGFloat {
         #if os(macOS)
-        return min(max(x, -geo.size.width*0.5 + 25), geo.size.width*0.5 - 25 - 35)
+        return min(max(x, 0 + 25), geo.size.width - 25 - 35)
         #else
-        return min(max(x, -geo.size.width*0.5 + 25), geo.size.width*0.5 - 25)
+        return min(max(x, 0 + 25), geo.size.width - 25)
         #endif
     }
     
     private func clipY(_ y: CGFloat, geo: GeometryProxy) -> CGFloat {
-        return min(max(y, -geo.size.height*0.5 + 25), geo.size.height*0.5 - 25)
+        return min(max(y, 0 + 25), geo.size.height - 25 - 25)
     }
     
     @ViewBuilder
@@ -203,9 +203,12 @@ struct LiveAppBirdView<Content: View>: View {
         if hideBird {
             baseView.id("_baseView")
         } else {
-            GeometryReader { geo in
-                baseView.id("_baseView").overlay(bird(geo: geo))
-            }.alert(isPresented: $askIfHideBird) {
+            baseView.id("_baseView")
+            .overlay(
+                GeometryReader { geo in
+                    bird(geo: geo)
+                }
+            ).alert(isPresented: $askIfHideBird) {
                 Alert(
                     title: Text("Hide Bird?"),
                     message: Text("To bring the floating bird back, you must completely close your app and relaunch it."),
