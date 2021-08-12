@@ -14,6 +14,7 @@ import SwiftInterpreterPrivate
 #elseif canImport(SwiftInterpreterBinary)
 import SwiftInterpreterBinary
 #endif
+import Runtime
 
 /** Provides a same manner for implementing the Swift interpreter's InterpretableType protocol.
  It's dangerous to implement InterpretableType by itself, because the LiveApp server will not know which clients have what InterpretableTypes implemented. By only implementing the InterpretableType through LiveApp's LocalDependency, you get an auto-generated hash at compile-time which can be used to identify custom InterpretableTypes by their "_depHash" (dependency hash). A LiveApp server can then ask LiveApp clients to self-report what LocalDependencies they have by passing a list of their _depHashs. Then the server will know if a new LiveElement (i.e. LiveView, LiveFunc, LiveStruct, LiveClass, etc.) can be safely assumed to be supported by the LiveApp client.
@@ -23,8 +24,24 @@ public protocol LocalDependency: _InterpretableType {
      Any change to the AST of this dependency--including name changes, orders of properties, etc., should trigger it's hash to be recalculated.
      Debug builds will trigger a runtime crash if it's found that the hash does not match what is expected.
      */
-    static var _depHash: String { get }
+    // todo: this should be determined at compile time but injected into the live bundle
+//    static var _depHash: String { get }
     
+}
+
+extension LocalDependency {
+    public static var _properties: [String : (get: (_ from: Any) throws -> Any, set: (_ value: Any, _ on: inout Any) throws -> Void)] {
+        do {
+            let typeInfo = try typeInfo(of: Self.self)
+            var dict: [String : (get: (_ from: Any) throws -> Any, set: (_ value: Any, _ on: inout Any) throws -> Void)] = [:]
+            for prop in typeInfo.properties {
+                dict[prop.name] = (get: prop.get, set: prop.set)
+            }
+            return dict
+        } catch {
+            return [:]
+        }
+    }
 }
 
 public func addActiveCompilationConditionDependency(_ condition: String) {

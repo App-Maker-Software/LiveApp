@@ -17,6 +17,7 @@ let package = Package(
         .package(name: "SwiftInterpreter", url: "https://github.com/App-Maker-Software/SwiftInterpreter", from: "0.4.5"),
 //        .package(name: "SwiftInterpreterSource", url: "https://github.com/App-Maker-Software/SwiftInterpreterSource", .branch("main")), // for private development work
         .package(name: "ExceptionCatcher", url: "https://github.com/sindresorhus/ExceptionCatcher", from: "2.0.0"),
+        .package(url: "https://github.com/wickwirew/Runtime.git", from: "2.2.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -25,6 +26,7 @@ let package = Package(
             name: "LiveApp",
             dependencies: [
                 "ExceptionCatcher",
+                "Runtime",
                 .product(name: "SwiftInterpreter", package: "SwiftInterpreter")
 //                .product(name: "SwiftInterpreterDebugOnly", package: "SwiftInterpreter") // unfortunately, this still isn't working. we must bring the xcframework into production builds even if we aren't using it
             ],

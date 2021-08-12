@@ -37,7 +37,11 @@ struct LiveAppBirdView<Content: View>: View {
     @State private var hideBird = false
     
     private func clipX(_ x: CGFloat, geo: GeometryProxy) -> CGFloat {
+        #if os(macOS)
+        return min(max(x, -geo.size.width*0.5 + 25), geo.size.width*0.5 - 25 - 35)
+        #else
         return min(max(x, -geo.size.width*0.5 + 25), geo.size.width*0.5 - 25)
+        #endif
     }
     
     private func clipY(_ y: CGFloat, geo: GeometryProxy) -> CGFloat {
@@ -102,6 +106,38 @@ struct LiveAppBirdView<Content: View>: View {
     }
     
     private var birdBase: some View {
+        #if os(macOS)
+//        HStack {
+            birdImage.getBird()
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50, height: 50)
+                .opacity(startedDragging ? 0 : 1) // prevents weird rendering bug with content menu
+                .opacity(isDragging ? 1 : 0.5)
+                .shadow(color: colorScheme == .light ? .black : .gray, radius: 12, x: 0.0, y: 0.0)
+                .overlay(Group {
+                    if isDragging {
+                        VStack(alignment: positionX < 0 ? .leading : .trailing) {
+                            Text("Right click for options").font(.footnote)
+                            Text("Drag to move").font(.footnote)
+                        }.frame(width: 120)
+                        .offset(x: positionX < 0 ? 80 : -80)
+                    }
+                })
+                .contextMenu {
+                    menu
+                }
+//            SupportMenu { menu } label: {
+//                Group {
+//                    if #available(macOS 11.0, *) {
+//                        Image(systemName: "info.circle")
+//                    } else {
+//                        Text("i")
+//                    }
+//                }
+//            }.frame(width: 35, height: 35)
+//        }
+        #else
         SupportMenu { menu } label: {
             birdImage.getBird()
                 .resizable()
@@ -111,6 +147,7 @@ struct LiveAppBirdView<Content: View>: View {
                 .opacity(isDragging ? 1 : 0.5)
                 .shadow(color: colorScheme == .light ? .black : .gray, radius: 12, x: 0.0, y: 0.0)
         }
+        #endif
     }
     
     private func bird(geo: GeometryProxy) -> some View {
@@ -134,15 +171,22 @@ struct LiveAppBirdView<Content: View>: View {
                 }
                 withAnimation(.linear(duration: 0)) {
                     positionX = clipX(clipX(prevPositionX, geo: geo) + value.translation.width, geo: geo)
+                    #if os(macOS)
+                    positionY = clipY(clipY(prevPositionY, geo: geo) - value.translation.height, geo: geo)
+                    #else
                     positionY = clipY(clipY(prevPositionY, geo: geo) + value.translation.height, geo: geo)
+                    #endif
                 }
             }.onEnded { value in
                 withAnimation(.easeOut(duration: 0.2)) {
                     isDragging = false
+                    #if !os(macOS)
+                    // "throws" the bird
                     if abs(value.predictedEndTranslation.width * value.predictedEndTranslation.height) > 50 {
                         positionX = clipX(clipX(prevPositionX, geo: geo) + value.predictedEndTranslation.width, geo: geo)
                         positionY = clipY(clipY(prevPositionY, geo: geo) + value.predictedEndTranslation.height, geo: geo)
                     }
+                    #endif
                 }
                 prevPositionX = positionX
                 prevPositionY = positionY
@@ -288,15 +332,14 @@ final class BirdImage: ObservableObject {
                     let data = data, error == nil,
                     let image = PlatImage(data: data)
                     else {
-                    self.isLoading = false
                     return
                 }
                 #if os(iOS)
                 self.bird = Image(uiImage: image)
-                try? data.write(to: self.cacheURL)
                 #else
                 self.bird = Image(platImage: image)
                 #endif
+                try? data.write(to: self.cacheURL)
                 self.objectWillChange.send()
                 self.isLoading = false
             }
