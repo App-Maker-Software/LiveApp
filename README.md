@@ -6,6 +6,11 @@ The Swift Package adds less than 1 megabyte to your app footprint.
 
 This is under active development, if you would like to contribute, contact Joe Hinkle. 
 
+# Notice: Temporarily down
+
+**Live App depends on the Swift interpreter--which is currently being rewritten and published as open source. While the rewrite is in progress it is unlikely for this repository to work. Either check out the new open source Swift interpreter [here](https://github.com/App-Maker-Software/SwiftInterpreter) or come check out LiveApp later.**
+
+
 ## Fast SwiftUI Previews
 
 ![liveapp-fruta-demo](https://user-images.githubusercontent.com/8505851/124366056-141a8c80-dc0a-11eb-88cd-0249bf847367.gif)
